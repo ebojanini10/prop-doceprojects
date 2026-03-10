@@ -49,6 +49,13 @@ if ! command -v staticrypt &>/dev/null; then
   exit 1
 fi
 
+# --- Template ---
+TEMPLATE="${SCRIPT_DIR}/staticrypt-template.html"
+if [[ ! -f "$TEMPLATE" ]]; then
+  echo "Error: Branded template not found: $TEMPLATE"
+  exit 1
+fi
+
 # --- Encrypt ---
 echo "Encrypting proposal for ${CLIENT}..."
 mkdir -p "$CLIENT"
@@ -57,7 +64,13 @@ staticrypt "$SOURCE" \
   --remember 0 \
   -d "$CLIENT" \
   --config .staticrypt.json \
-  --short
+  --short \
+  -t "$TEMPLATE" \
+  --template-button "ACCEDER" \
+  --template-title "Propuesta Comercial" \
+  --template-placeholder "Contraseña" \
+  --template-error "Contraseña incorrecta" \
+  --template-instructions "Ingresa la contraseña proporcionada para acceder."
 
 # Rename to index.html (staticrypt keeps original filename)
 ENCRYPTED_FILE="$CLIENT/$(basename "$SOURCE")"
